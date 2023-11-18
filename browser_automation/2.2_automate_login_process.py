@@ -1,4 +1,4 @@
-# Importing necessary modules and classes from the Selenium package and other required libraries.
+# Importing necessary modules and classes from the Selenium package, Python's logging library, and other required libraries.
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -46,6 +46,32 @@ def get_driver():
         driver.quit()
 
 
+def log_to_output(msg):
+    # Setting up a logger to record messages.
+    logger = logging.getLogger(__name__)
+
+    # Setting the log level to INFO, which includes messages of level INFO and above.
+    logger.setLevel(logging.INFO)
+
+    # Creating a file handler to write logs to a file.
+    handler = logging.FileHandler("my_log.log")
+
+    # Defining the format for log messages.
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.setFormatter(formatter)
+
+    # Adding the handler to the logger.
+    logger.addHandler(handler)
+
+    # Preventing the log messages from being propagated to higher-level loggers.
+    logger.propagate = False
+
+    # Logging the provided message.
+    logger.info(f"{msg}")
+
+
 def main():
     # Using the get_driver context manager to ensure the WebDriver is set up and torn down correctly.
     with get_driver() as driver:
@@ -73,53 +99,37 @@ def main():
         # Finding the submit button by its XPATH and clicking it.
         driver.find_element(By.XPATH, "//button[@type='submit']").click()
 
+        # Printing the current URL after logging in.
         print(f"{driver.current_url}")
 
+        # Waiting until the 'Home' link is visible.
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.LINK_TEXT, "Home"))
         )
-
+        # Clicking the 'Home' link.
         driver.find_element(By.LINK_TEXT, "Home").click()
 
-        # Looping 10 times to demonstrate repeated actions on a web page.
-        for i in range(10):
+        # Looping 5 times to demonstrate repeated actions on a web page.
+        for i in range(5):
             # Using WebDriverWait to wait for a specific element to become visible.
-            # This is a more robust method compared to static waiting, as it adapts to different loading times.
             WebDriverWait(driver, 10).until(
                 EC.visibility_of_element_located(
                     (By.CSS_SELECTOR, "#displaytimer .text-success")
                 )
             )
 
-            # Finding an element by its CSS selector and printing its text content.
+            # Finding an element by its CSS selector and storing its text content.
             average_world_temperature = driver.find_element(
                 By.CSS_SELECTOR, "#displaytimer .text-success"
             ).text
 
-            # Create a logger
-            logger = logging.getLogger(__name__)
+            # Logging the retrieved text to a file.
+            log_to_output(average_world_temperature)
 
-            # Set the log level
-            logger.setLevel(logging.INFO)
-
-            # Create a handler
-            handler = logging.FileHandler("my_log.log")
-
-            # Set the log format
-            formatter = logging.Formatter(
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-            )
-            handler.setFormatter(formatter)
-
-            # Add the handler to the logger
-            logger.addHandler(handler)
-
-            # Log a message
-            logger.info(f"{average_world_temperature}")
-
-            # Pausing the script for 2 seconds before continuing the loop.
+            # Pausing the script for 5 seconds before continuing the loop.
             time.sleep(5)
 
+        # Printing the current URL after completing the actions.
         print(f"{driver.current_url}")
 
 
