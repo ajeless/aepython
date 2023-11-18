@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from contextlib import contextmanager
 
+
 # Defining a context manager to handle the setup and teardown of the Selenium WebDriver.
 @contextmanager
 def get_driver():
@@ -17,10 +18,18 @@ def get_driver():
     # Setting various options to control the behavior of the Chrome browser.
     chrome_options.add_argument("--disable-infobars")  # Disables the infobars.
     chrome_options.add_argument("--start-maximized")  # Starts Chrome maximized.
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcomes limited resource problems.
-    chrome_options.add_argument("--no-sandbox")  # Bypasses OS security model; used in container environments.
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Disables the flag that shows Chrome is being automated.
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])  # Excludes the switch that enables automation.
+    chrome_options.add_argument(
+        "--disable-dev-shm-usage"
+    )  # Overcomes limited resource problems.
+    chrome_options.add_argument(
+        "--no-sandbox"
+    )  # Bypasses OS security model; used in container environments.
+    chrome_options.add_argument(
+        "--disable-blink-features=AutomationControlled"
+    )  # Disables the flag that shows Chrome is being automated.
+    chrome_options.add_experimental_option(
+        "excludeSwitches", ["enable-automation"]
+    )  # Excludes the switch that enables automation.
 
     # Initializing the Chrome WebDriver using ChromeDriverManager.
     # ChromeDriverManager automatically downloads the driver binary and sets its path.
@@ -34,6 +43,7 @@ def get_driver():
     finally:
         # Ensuring the WebDriver is closed properly, which closes the browser window and frees up resources.
         driver.quit()
+
 
 def main():
     # Using the get_driver context manager to ensure the WebDriver is set up and torn down correctly.
@@ -64,6 +74,7 @@ def main():
 
         # Waiting for an additional 5 seconds after the actions are completed.
         time.sleep(5)
+
 
 # This conditional statement checks if the script is being run directly (not imported as a module).
 # If it is run directly, it calls the main function.
