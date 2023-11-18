@@ -39,26 +39,30 @@ def main():
     # Using the get_driver context manager to ensure the WebDriver is set up and torn down correctly.
     with get_driver() as driver:
         # Directing the WebDriver to navigate to a specific URL.
-        driver.get("https://automated.pythonanywhere.com")
+        driver.get("https://automated.pythonanywhere.com/login/")
 
-        # Looping 10 times to demonstrate repeated actions on a web page.
-        for i in range(10):
-            # Using WebDriverWait to wait for a specific element to become visible.
-            # This is a more robust method compared to static waiting, as it adapts to different loading times.
-            WebDriverWait(driver, 10).until(
-                EC.visibility_of_element_located(
-                    (By.CSS_SELECTOR, "#displaytimer .text-success")
-                )
-            )
+        # Waiting until the username input field is visible.
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "id_username"))
+        )
+        # Finding the username input field by its ID and entering text.
+        driver.find_element(By.ID, "id_username").send_keys("automated")
 
-            # Finding an element by its CSS selector and printing its text content.
-            print(
-                driver.find_element(By.CSS_SELECTOR, "#displaytimer .text-success").text
-            )
-            # Pausing the script for 2 seconds before continuing the loop.
-            time.sleep(2)
+        # Waiting until the password input field is visible.
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "id_password"))
+        )
+        # Finding the password input field by its ID and entering text.
+        driver.find_element(By.ID, "id_password").send_keys("automatedautomated")
 
-        # Waiting for an additional 5 seconds at the end of the loop.
+        # Waiting until the submit button is visible.
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//button[@type='submit']"))
+        )
+        # Finding the submit button by its XPATH and clicking it.
+        driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        # Waiting for an additional 5 seconds after the actions are completed.
         time.sleep(5)
 
 # This conditional statement checks if the script is being run directly (not imported as a module).
