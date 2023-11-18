@@ -1,15 +1,31 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+import time
 
-driver_manager = ChromeDriverManager()
-driver = webdriver.Chrome(driver_manager.install())
+# Initialize Chrome options
+chrome_options = Options()
 
-options = webdriver.ChromeOptions()
-options.add_argument(
-    '--ignore-certificate-errors', 
-    '--incognito', 'disable-infobars', 
-    'start-maximized', 
-    'disable-dev-shm-usage', 
-    'no-sandbox')
+# Set various options
+chrome_options.add_argument("--disable-infobars")
+chrome_options.add_argument("--start-maximized")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
 
-# driver = webdriver.Chrome()
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+
+
+
+
+# # Initialize the Chrome driver with the options
+# driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
+
+# Now you can use `driver` to navigate and interact with web pages
+driver.get("https://www.example.com")
+
+# ... perform actions on the web page ...
+time.sleep(15)
+
+# Close the driver
+driver.quit()
