@@ -11,6 +11,7 @@ python = "^3.10"
 selenium = "^4.15.2"
 webdriver-manager = "^4.0.1"
 ruff = "^0.1.6"
+logging = "^0.4.9.6"
 
 
 [build-system]
