@@ -1,54 +1,64 @@
-# Import necessary modules from selenium
+# Importing necessary modules and classes from the Selenium package and other required libraries.
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
+from contextlib import contextmanager
 
 
+# Defining a context manager to handle the setup and teardown of the Selenium WebDriver.
+@contextmanager
 def get_driver():
-    # Initialize an instance of ChromeOptions. This class helps in managing options specific to ChromeDriver.
+    # Creating an instance of Options to configure ChromeDriver settings.
     chrome_options = Options()
+    # Additional ChromeDriver options can be added here. For example, running Chrome in headless mode.
 
-    # Adding various arguments to ChromeOptions to customize the browser's behavior:
-
-    # Disables the infobar that shows messages like "Chrome is being controlled by automated test software".
-    chrome_options.add_argument("--disable-infobars")
-
-    # Opens the browser in maximized mode.
-    chrome_options.add_argument("--start-maximized")
-
-    # Prevents Chrome from using /dev/shm for shared memory, which can cause crashes in certain environments.
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    # Disables the sandbox security feature in Chrome. Note: This can make your browser less secure.
-    chrome_options.add_argument("--no-sandbox")
-
-    # Disables a Chrome feature that detects automation tools controlling the browser, making automation less detectable.
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
-    # Ignores SSL certificate errors. Useful for testing on sites with self-signed certificates.
-    chrome_options.add_argument("--ignore-certificate-errors")
-
-    # Excludes the switch that enables automation, helping to make the browser automation less detectable.
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-
-    # Initialize the Chrome driver with the specified options.
+    # Initializing the Chrome WebDriver using ChromeDriverManager.
     # ChromeDriverManager automatically downloads the driver binary and sets its path.
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()), options=chrome_options
     )
-    return driver
+
+    try:
+        # Yielding the WebDriver object to the calling function, allowing it to be used outside this context manager.
+        yield driver
+    finally:
+        # Ensuring the WebDriver is closed properly, which closes the browser window and frees up resources.
+        driver.quit()
 
 
-# Call the get_driver function to initialize the Chrome WebDriver with the specified options.
-driver = get_driver()
+def main():
+    # Using the get_driver context manager to ensure the WebDriver is set up and torn down correctly.
+    with get_driver() as driver:
+        # Directing the WebDriver to navigate to a specific URL.
+        driver.get("https://automated.pythonanywhere.com")
 
-# Use the `driver` to navigate to a web page.
-driver.get("https://automated.pythonanywhere.com")
+        # Looping 10 times to demonstrate repeated actions on a web page.
+        for i in range(10):
+            # Using WebDriverWait to wait for a specific element to become visible.
+            # This is a more robust method compared to static waiting, as it adapts to different loading times.
+            WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located(
+                    (By.CSS_SELECTOR, "#displaytimer .text-success")
+                )
+            )
 
-# Wait for 15 seconds. This is useful for observing what happens on the browser, especially during testing.
-time.sleep(15)
+            # Finding an element by its CSS selector and printing its text content.
+            print(
+                driver.find_element(By.CSS_SELECTOR, "#displaytimer .text-success").text
+            )
+            # Pausing the script for 2 seconds before continuing the loop.
+            time.sleep(2)
 
-# Close the browser and quit the driver session. This is important to free up system resources and avoid potential leaks.
-driver.quit()
+        # Waiting for an additional 5 seconds at the end of the loop.
+        time.sleep(5)
+
+
+# This conditional statement checks if the script is being run directly (not imported as a module).
+# If it is run directly, it calls the main function.
+if __name__ == "__main__":
+    main()
