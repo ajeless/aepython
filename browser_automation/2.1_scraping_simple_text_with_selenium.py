@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import time
 
+
 def get_driver():
     # Initialize an instance of ChromeOptions. This class helps in managing options specific to ChromeDriver.
     chrome_options = Options()
@@ -38,6 +39,7 @@ def get_driver():
         service=ChromeService(ChromeDriverManager().install()), options=chrome_options
     )
     return driver
+
 
 # Call the get_driver function to initialize the Chrome WebDriver with the specified options.
 driver = get_driver()
